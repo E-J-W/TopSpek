@@ -69,6 +69,7 @@ VERBOSITY(value)
 normal: Print various information when running the program (default).
 chisq: Don't show any plots and only print the chisq value of the fit (if fitting is successful).  Useful for interfacing the program with shell scripts.
 redchisq: Don't show any plots and only print the reduced chisq value of the fit (if fitting is successful).
+scaling: Don't show any plots and only print the scaling factor(s) determined in the fit (if fitting is successful).  Scaling factors are printed with one line per input dataset, with the scaling factors for each spectrum separated by spaces.
 
 DATA(file_path)
 DATA(file_path, fix_scaling, scaling_arg0, scaling_arg1...)

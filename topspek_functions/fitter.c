@@ -176,8 +176,8 @@ int checkForRefit(par * p, fitpar * fp)
 						}
 		}
 	if(p->forcePositiveS==1)//force positive scaling factors
-  	{
-  		if(refit==0)//check that refit hasn't previously been called (only refit one thing at a time)
+		{
+			if(refit==0)//check that refit hasn't previously been called (only refit one thing at a time)
 				for (i=0;i<p->numSimData;i++)
 					for (j=0;j<p->numSpectra;j++)
 						if(p->simDataFixedAmp[i][j]==0)//if data was fit
@@ -197,7 +197,7 @@ int checkForRefit(par * p, fitpar * fp)
 									p->numFittedSimData[j]-=1;
 									refit=1;
 								}
-  	}
+		}
   if((p->verbose>=0)&&(refit==1))
   	printf("Some fit values were out of specified bounds.  Refitting...\n\n");
   return refit;
@@ -238,6 +238,15 @@ void printFitData(const par * p, const fitpar * fp)
           printf("\n");
         }
     }
+	else if(p->verbose==-3)
+		{
+			for (j=0;j<p->numSimData;j++)
+				{
+					for (i=0;i<p->numSpectra;i++)
+						printf("%f ",fp->scaleFactor[j][i]);//only print the scaling factors
+					printf("\n");
+				}
+		}
 }
 
 void applyBackgroundandScaling(const par * p, const fitpar * fp, const data * d, fitdata * fd)
