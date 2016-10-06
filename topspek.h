@@ -36,6 +36,8 @@ typedef struct
   double channelScaling;//value to scale all channel values specified in the parameter file by (useful for looking at the same data with different contraction factors)
   int forcePositiveS;//1=scaling factors in fit will be forced to be positive
   int indSpectra;//bool specifying whether spectra are independent measurements (for total chisq calculation)
+  int commonSPFit;//bool specifying whether to fit separate regions of the same spectrum with common scaling and background (default=1)
+  int commonSpMap[NSPECT];//array mapping common spectrum number to spectrum number
 }par; //parameters for peak comparison (from parameter file)
 
 typedef struct

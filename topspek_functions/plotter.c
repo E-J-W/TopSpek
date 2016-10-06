@@ -52,7 +52,8 @@ void plotSpectra(const par * p, const data * d, const fitdata * fd)
 
   plotOpen=1; 
   handle=gnuplot_init();
-  printf("\nDATA PLOTS\n----------\nUse 'l' in the plotting window to switch between linear and logarithmic scale.\n");
+  printf("\nDATA PLOTS\n----------\n");
+  //printf("Use 'l' in the plotting window to switch between linear and logarithmic scale.\n");
   for(i=0;i<p->numSpectra;i++)
     {
       gnuplot_setstyle(handle,"steps");

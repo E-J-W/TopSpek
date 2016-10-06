@@ -44,6 +44,7 @@ void readParFile(const char * fileName, par * p)
   p->numSimData=0;
   memset(p->numFittedSimData,0,sizeof(p->numFittedSimData));
   p->channelScaling=1.;
+  p->commonSPFit=1;
   memset(p->fixBG,0,sizeof(p->fixBG));
   
   //open the file and read all parameters
@@ -183,6 +184,13 @@ void readParFile(const char * fileName, par * p)
           else
             p->indSpectra=0;
         }
+      else if(strcmp(opt[i]->name,"COMMON_SP_FITTING")==0)
+        {
+        	if(strcmp(opt[i]->par[0],"yes")==0)
+            p->commonSPFit=1;
+          else
+            p->commonSPFit=0;
+        }
       else if(strcmp(opt[i]->name,"DATA")==0)
         {
         	p->simDataCommonScaling[p->numSimData]=1;
@@ -248,6 +256,24 @@ void readParFile(const char * fileName, par * p)
   if(p->addBackground==2)
     for(i=0;i<p->numSpectra;i++)
       p->fixedBGPar[i][2]=0;
+	
+	//build a map of common spectra
+	if(p->commonSPFit==1)
+		{
+			for(i=0;i<p->numSpectra;i++)
+				for(j=(p->numSpectra-1);j>=0;j--)
+					if(p->spectrum[i]==p->spectrum[j])
+						p->commonSpMap[i]=j;
+		}
+	else
+		{
+			for(i=0;i<p->numSpectra;i++)
+				p->commonSpMap[i]=i;
+		}
+  /*//debug
+  printf("Common spectra map:\n");
+  for(i=0;i<p->numSpectra;i++)
+  	printf("%i %i\n",i,p->commonSpMap[i]);*/
   
   //print parameters read from the file
   if(p->verbose>=0)
@@ -315,6 +341,8 @@ void readParFile(const char * fileName, par * p)
             printf("Fixing background parameters to A = %lf, B = %lf, C = %lf for spectrum %i, channels %i to %i.\n",p->fixedBGPar[i][0],p->fixedBGPar[i][1],p->fixedBGPar[i][2],p->spectrum[i],p->startCh[i],p->endCh[i]);
       if(p->indSpectra==1)
       	printf("Will treat spectra as independent measurements for reduced chisq calculation.\n");
+      if(p->commonSPFit==1)
+      	printf("Will fit any separate regions of the same spectrum with common scaling and background.\n");
       if(p->plotOutput==0)
         printf("Will not plot output data.\n");
       if(p->plotOutput==1)

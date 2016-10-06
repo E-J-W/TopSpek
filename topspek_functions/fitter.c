@@ -272,7 +272,7 @@ void applyBackgroundandScaling(const par * p, const fitpar * fp, const data * d,
 void generateSums(const par * p, const data * d, fitsum * fs, const int specNum, const int bgMode)
 {
   long double ind;
-  int j,k,l;
+  int i,j,k,l;
   
   //initialize sums
   memset(fs,0,sizeof(fitsum));
@@ -282,50 +282,58 @@ void generateSums(const par * p, const data * d, fitsum * fs, const int specNum,
   printf("p->startCh[%i]: %i, p->endCh[%i]: %i\n",specNum,p->startCh[specNum],specNum,p->endCh[specNum]);
   printf("d->fittedSimHist[0][%i][%i]: %f\n",specNum,p->startCh[specNum],d->fittedSimHist[0][specNum][p->startCh[specNum]]);*/
   
-  //construct sums
-  for (j=p->startCh[specNum];j<=p->endCh[specNum];j++)
-    if(d->expHist[p->spectrum[specNum]][j]!=0)
-      {
-        fs->m_sum+=d->fittedExpHist[specNum][j]/((double)d->expHist[p->spectrum[specNum]][j]);
-        for (k=0;k<p->numFittedSimData[specNum];k++)
-          {
-            fs->ms_sum[k]+=d->fittedExpHist[specNum][j]*(double)d->fittedSimHist[k][specNum][j]/((double)d->expHist[p->spectrum[specNum]][j]);//cast to double in numerator needed to prevent overflow
-            for (l=0;l<p->numFittedSimData[specNum];l++)
-              fs->ss_sum[k][l]+=(double)d->fittedSimHist[k][specNum][j]*(double)d->fittedSimHist[l][specNum][j]/((double)d->expHist[p->spectrum[specNum]][j]);
-          }
-      }
-  if(abs(bgMode)>=1)
-    for (j=p->startCh[specNum];j<=p->endCh[specNum];j++)
-      if(d->expHist[p->spectrum[specNum]][j]!=0)
-        {
-          fs->sum1+=1./((double)d->expHist[p->spectrum[specNum]][j]);
-          for (k=0;k<p->numFittedSimData[specNum];k++)
-            fs->s_sum[k]+=d->fittedSimHist[k][specNum][j]/((double)d->expHist[p->spectrum[specNum]][j]);
-        }
-  if(abs(bgMode)>=2)
-    for (j=p->startCh[specNum];j<=p->endCh[specNum];j++)
-      if(d->expHist[p->spectrum[specNum]][j]!=0)
-        {
-          ind=(long double)j;  
-          fs->mi_sum+=d->fittedExpHist[specNum][j]*ind/((double)d->expHist[p->spectrum[specNum]][j]);
-          fs->i_sum+=ind/((double)d->expHist[p->spectrum[specNum]][j]);
-          fs->ii_sum+=ind*ind/((double)d->expHist[p->spectrum[specNum]][j]);
-          for (k=0;k<p->numFittedSimData[specNum];k++)
-            {
-              fs->si_sum[k]+=d->fittedSimHist[k][specNum][j]*ind/((double)d->expHist[p->spectrum[specNum]][j]);
-            }
-        }
-  if(abs(bgMode)>=3)
-    for (j=p->startCh[specNum];j<=p->endCh[specNum];j++)
-      if(d->expHist[p->spectrum[specNum]][j]!=0)
-        {
-          ind=(long double)j;
-          fs->mii_sum+=d->fittedExpHist[specNum][j]*ind*ind/((double)d->expHist[p->spectrum[specNum]][j]);
-          fs->iii_sum+=ind*ind*ind/((double)d->expHist[p->spectrum[specNum]][j]);
-          fs->iiii_sum+=ind*ind*ind*ind/((double)d->expHist[p->spectrum[specNum]][j]);
-          for (k=0;k<p->numFittedSimData[specNum];k++)
-            fs->sii_sum[k]+=d->fittedSimHist[k][specNum][j]*ind*ind/((double)d->expHist[p->spectrum[specNum]][j]);
-        }
+  int commonSpecNum=p->commonSpMap[specNum];
+  
+	//construct sums
+	for(i=0;i<p->numSpectra;i++)
+		{
+			if(p->commonSpMap[i]==commonSpecNum)
+				{
+					for (j=p->startCh[i];j<=p->endCh[i];j++)
+						if(d->expHist[p->spectrum[i]][j]!=0)
+							{
+								fs->m_sum+=d->fittedExpHist[i][j]/((double)d->expHist[p->spectrum[i]][j]);
+								for (k=0;k<p->numFittedSimData[i];k++)
+									{
+										fs->ms_sum[k]+=d->fittedExpHist[i][j]*(double)d->fittedSimHist[k][i][j]/((double)d->expHist[p->spectrum[i]][j]);//cast to double in numerator needed to prevent overflow
+										for (l=0;l<p->numFittedSimData[i];l++)
+											fs->ss_sum[k][l]+=(double)d->fittedSimHist[k][i][j]*(double)d->fittedSimHist[l][i][j]/((double)d->expHist[p->spectrum[i]][j]);
+									}
+							}
+					if(abs(bgMode)>=1)
+						for (j=p->startCh[i];j<=p->endCh[i];j++)
+							if(d->expHist[p->spectrum[i]][j]!=0)
+								{
+									fs->sum1+=1./((double)d->expHist[p->spectrum[i]][j]);
+									for (k=0;k<p->numFittedSimData[i];k++)
+										fs->s_sum[k]+=d->fittedSimHist[k][i][j]/((double)d->expHist[p->spectrum[i]][j]);
+								}
+					if(abs(bgMode)>=2)
+						for (j=p->startCh[i];j<=p->endCh[i];j++)
+							if(d->expHist[p->spectrum[i]][j]!=0)
+								{
+									ind=(long double)j;  
+									fs->mi_sum+=d->fittedExpHist[i][j]*ind/((double)d->expHist[p->spectrum[i]][j]);
+									fs->i_sum+=ind/((double)d->expHist[p->spectrum[i]][j]);
+									fs->ii_sum+=ind*ind/((double)d->expHist[p->spectrum[i]][j]);
+									for (k=0;k<p->numFittedSimData[i];k++)
+										{
+											fs->si_sum[k]+=d->fittedSimHist[k][i][j]*ind/((double)d->expHist[p->spectrum[i]][j]);
+										}
+								}
+					if(abs(bgMode)>=3)
+						for (j=p->startCh[i];j<=p->endCh[i];j++)
+							if(d->expHist[p->spectrum[i]][j]!=0)
+								{
+									ind=(long double)j;
+									fs->mii_sum+=d->fittedExpHist[i][j]*ind*ind/((double)d->expHist[p->spectrum[i]][j]);
+									fs->iii_sum+=ind*ind*ind/((double)d->expHist[p->spectrum[i]][j]);
+									fs->iiii_sum+=ind*ind*ind*ind/((double)d->expHist[p->spectrum[i]][j]);
+									for (k=0;k<p->numFittedSimData[i];k++)
+										fs->sii_sum[k]+=d->fittedSimHist[k][i][j]*ind*ind/((double)d->expHist[p->spectrum[i]][j]);
+								}
+				}
+		}
 }
 
 //given a set of sums, set up and solve the fit equation
