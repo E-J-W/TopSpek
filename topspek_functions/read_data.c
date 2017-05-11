@@ -1,4 +1,4 @@
-//function reads an .mca file into an integer array and returns the array
+//function reads an .mca file into a double array and returns the array
 void readMCA(FILE * inp, const char * filename, const int numSpec, double outHist[NSPECT][S32K])
 {
 	int i,j;
@@ -19,7 +19,7 @@ void readMCA(FILE * inp, const char * filename, const int numSpec, double outHis
   
 }
 
-//function reads an .spe file into an integer array and returns the array
+//function reads an .spe file into a double array and returns the array
 void readSPE(FILE * inp, const char * filename, const int numSpec, double outHist[NSPECT][S32K])
 {
 	int i;
