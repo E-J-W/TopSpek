@@ -14,7 +14,7 @@ For a detailed example and description of how to specify parameters, see the inc
 
 ## Features
 
-* Accepts .mca (integer array) and .spe (radware) files for experimental and simulated data.
+* Accepts .mca (integer array), .fmca (float array), and .spe (radware) files for experimental and simulated data.
 * Simultaneously minimizes chisq goodness of fit statistic for one or multiple datasets with respect to the experimental data.
 * Can add background of various forms and scale data to aid in chisq minimization.
 * Scaling of data can be fixed to an absolute value or relative to other data, or be left as a free parameter.
@@ -25,6 +25,8 @@ For a detailed example and description of how to specify parameters, see the inc
 ## Input Data Types
 
 **.mca** - An .mca file is simply a 2D array of integers, with the first index denoting a spectrum number (up to 100) and the second index denoting a bin number (up to 32768).  See 'topspek_functions/save_data.c' for an example of how to write data to an .mca file.
+
+**.fmca** - An .fmca file has the same format as .mca except with floats rater than integers.
 
 **.spe** - An .spe file is the data type written by radware when using the 'ws' command in gf3.
 

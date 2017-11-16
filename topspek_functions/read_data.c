@@ -19,6 +19,25 @@ void readMCA(FILE * inp, const char * filename, const int numSpec, double outHis
   
 }
 
+void readFMCA(FILE * inp, const char * filename, const int numSpec, double outHist[NSPECT][S32K])
+{
+  int i,j;
+	float tmpHist[S32K];
+
+	for (i=0;i<numSpec;i++)
+		{
+			if(fread(tmpHist,S32K*sizeof(float),1,inp)!=1)
+				{
+					printf("ERROR: Cannot read spectrum %i from the .fmca file: %s\n",i,filename);
+					printf("Verify that the format and number of spectra in the file are correct.\n");
+					exit(-1);
+				}
+			else
+				for(j=0;j<S32K;j++)
+					outHist[i][j]=(double)tmpHist[j];
+		}
+}
+
 //function reads an .spe file into a double array and returns the array
 void readSPE(FILE * inp, const char * filename, const int numSpec, double outHist[NSPECT][S32K])
 {
@@ -63,12 +82,14 @@ void readDataFile(const char * filename, const int numSpec, double outHist[NSPEC
 	const char *dot = strrchr(filename, '.');//get the file extension
 	if(strcmp(dot + 1,"mca")==0)
 		readMCA(inp, filename, numSpec, outHist);
+	else if(strcmp(dot + 1,"fmca")==0)
+		readFMCA(inp, filename, numSpec, outHist);
 	else if(strcmp(dot + 1,"spe")==0)
 		readSPE(inp, filename, numSpec, outHist);
 	else
 		{
 			printf("ERROR: Improper type of input file: %s\n",filename);
-      printf("Integer array (.mca) and radware (.spe) files are supported.\n");
+      printf("Integer array (.mca), float array (.fmca), and radware (.spe) files are supported.\n");
       exit(-1);
 		}
 	

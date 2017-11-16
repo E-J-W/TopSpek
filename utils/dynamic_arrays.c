@@ -24,6 +24,30 @@ double** allocateArrayD2(int dim1, int dim2)
   return (double**)array;
 }
 
+float*** allocateArrayF3(int dim1, int dim2, int dim3)
+{ 
+  int i,j;
+  float ***array=(float ***)calloc(dim1,sizeof(float**));
+  for (i=0;i<dim1;i++)
+    {
+      array[i] = (float **)calloc(dim2,sizeof(float*));
+      for (j=0;j<dim2;j++)
+        array[i][j] = (float *)calloc(dim3,sizeof(float));
+    }
+
+  return (float***)array;
+}
+
+float** allocateArrayF2(int dim1, int dim2)
+{ 
+  int i;
+  float **array=(float **)calloc(dim1,sizeof(float**));
+  for (i=0;i<dim1;i++)
+      array[i] = (float *)calloc(dim2,sizeof(float*));
+
+  return (float**)array;
+}
+
 int*** allocateArrayI3(int dim1, int dim2, int dim3)
 { 
   int i,j;
